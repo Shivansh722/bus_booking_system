@@ -240,6 +240,31 @@ export function AdminAuthForm({ mode }: { mode: "login" | "signup" }) {
       
       <CardFooter className="text-xs text-gray-600 bg-gray-50 rounded-b-lg">
         <div className="w-full">
+          <div className="text-center mb-3">
+            {mode === "login" ? (
+              <p>
+                Don't have an admin account?{" "}
+                <Button
+                  variant="link"
+                  className="p-0 h-auto text-blue-600 hover:text-blue-800"
+                  onClick={() => router.push("/admin/signup")}
+                >
+                  Create Admin Account
+                </Button>
+              </p>
+            ) : (
+              <p>
+                Already have an admin account?{" "}
+                <Button
+                  variant="link"
+                  className="p-0 h-auto text-blue-600 hover:text-blue-800"
+                  onClick={() => router.push("/admin/login")}
+                >
+                  Login Here
+                </Button>
+              </p>
+            )}
+          </div>
           <p className="font-medium mb-1">Admin Authentication Requirements:</p>
           <ul className="list-disc list-inside space-y-1">
             <li>Email must start with 'admin@'</li>

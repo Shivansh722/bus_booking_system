@@ -8,31 +8,91 @@ export async function GET(req: NextRequest) {
   const auth = await verifyJwtFromRequest(req)
   const adminView = req.nextUrl.searchParams.get("admin") === "1" && assertRole(auth, "admin")
 
-  const buses = await Bus.find().sort({ departureTime: 1 }).lean()
+  // Get query parameters for filtering
+  const { searchParams } = new URL(req.url)
+  const origin = searchParams.get('origin')
+  const destination = searchParams.get('destination')
+  const date = searchParams.get('date')
+  const busType = searchParams.get('busType')
+
+  // Build query
+  const query: any = { isActive: true }
+  
+  if (origin) {
+    query.origin = { $regex: origin, $options: 'i' }
+  }
+  
+  if (destination) {
+    query.destination = { $regex: destination, $options: 'i' }
+  }
+  
+  if (date) {
+    const startDate = new Date(date)
+    const endDate = new Date(date)
+    endDate.setDate(endDate.getDate() + 1)
+    query.departureTime = {
+      $gte: startDate,
+      $lt: endDate
+    }
+  }
+  
+  if (busType) {
+    query.busType = busType
+  }
+
+  const buses = await Bus.find(query).sort({ departureTime: 1 }).lean()
+  
   if (adminView) {
     // include bookings for admin with user ids
     return Response.json(
       buses.map((b) => ({
         _id: String(b._id),
         name: b.name,
+        busNumber: b.busNumber,
+        operator: b.operator,
         origin: b.origin,
         destination: b.destination,
         departureTime: b.departureTime,
+        arrivalTime: b.arrivalTime,
+        duration: b.duration,
+        price: b.price,
+        busType: b.busType,
+        amenities: b.amenities,
         totalSeats: b.totalSeats,
+        availableSeats: b.availableSeats,
         bookedCount: b.bookings.length,
-        bookings: b.bookings.map((bk) => ({ seat: bk.seat, user: String(bk.user), createdAt: bk.createdAt })),
+        bookings: b.bookings.map((bk: any) => ({ 
+           seat: bk.seat, 
+           user: String(bk.user), 
+           passengerName: bk.passengerName,
+           passengerPhone: bk.passengerPhone,
+           bookingStatus: bk.bookingStatus,
+           createdAt: bk.createdAt 
+         })),
+        isActive: b.isActive,
+        createdAt: b.createdAt,
+        updatedAt: b.updatedAt
       })),
     )
   }
+  
   return Response.json(
     buses.map((b) => ({
       _id: String(b._id),
       name: b.name,
+      busNumber: b.busNumber,
+      operator: b.operator,
       origin: b.origin,
       destination: b.destination,
       departureTime: b.departureTime,
+      arrivalTime: b.arrivalTime,
+      duration: b.duration,
+      price: b.price,
+      busType: b.busType,
+      amenities: b.amenities,
       totalSeats: b.totalSeats,
-      available: b.totalSeats - b.bookings.length,
+      availableSeats: b.availableSeats,
+      bookedSeats: b.bookings.map((bk: any) => bk.seat)
     })),
   )
 }

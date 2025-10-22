@@ -1,10 +1,10 @@
-import { Navbar } from "@/components/navbar"
+import { UserNavbar } from "@/components/user-navbar"
 import { UserAuthForm } from "@/components/user-auth-form"
 
 export default function UserSignupPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100">
-      <Navbar />
+    <div className="min-h-screen bg-background">
+      <UserNavbar />
       <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <UserAuthForm mode="signup" />
       </div>

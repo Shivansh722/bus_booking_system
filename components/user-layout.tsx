@@ -1,9 +1,7 @@
-"use client"
-
 import { ReactNode } from "react"
+import { UserNavbar } from "@/components/user-navbar"
 import { User, Ticket, Bus, MapPin, Clock } from "lucide-react"
 import Link from "next/link"
-import { LogoutButton } from "./logout-button"
 
 interface UserLayoutProps {
   children: ReactNode
@@ -12,25 +10,8 @@ interface UserLayoutProps {
 
 export function UserLayout({ children, title = "Bus Booking" }: UserLayoutProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
-      {/* User Header */}
-      <header className="bg-blue-600 text-white shadow-lg border-b-4 border-blue-700">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Bus className="h-8 w-8" />
-              <div>
-                <h1 className="text-2xl font-bold">Bus Booking</h1>
-                <p className="text-blue-100 text-sm">Your Travel Companion</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-blue-100 text-sm">Welcome, User</span>
-              <LogoutButton />
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background">
+      <UserNavbar />
 
       <div className="flex">
         {/* User Sidebar */}

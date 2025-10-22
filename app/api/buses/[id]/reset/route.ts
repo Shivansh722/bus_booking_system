@@ -3,11 +3,12 @@ import { dbConnect } from "@/lib/db"
 import { Bus } from "@/models/bus"
 import { verifyJwtFromRequest, assertRole } from "@/lib/auth"
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   await dbConnect()
   const auth = await verifyJwtFromRequest(req)
   if (!assertRole(auth, "admin")) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 })
-  const bus = await Bus.findById(params.id)
+  const { id } = await params
+  const bus = await Bus.findById(id)
   if (!bus) return new Response(JSON.stringify({ error: "Not found" }), { status: 404 })
   bus.bookings = []
   await bus.save()

@@ -1,7 +1,7 @@
 "use client"
 
 import useSWR from "swr"
-import { Navbar } from "@/components/navbar"
+import { UserLayout } from "@/components/user-layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
@@ -14,8 +14,7 @@ export default function TicketsPage() {
     if (res.ok) mutate()
   }
   return (
-    <main>
-      <Navbar />
+    <UserLayout title="My Tickets">
       <section className="mx-auto max-w-5xl px-4 py-8">
         <h1 className="text-xl font-semibold mb-4 text-pretty">My Tickets</h1>
         <div className="grid gap-4">
@@ -48,6 +47,6 @@ export default function TicketsPage() {
           )}
         </div>
       </section>
-    </main>
+    </UserLayout>
   )
 }

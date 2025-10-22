@@ -1,9 +1,7 @@
-"use client"
-
 import { ReactNode } from "react"
-import { Shield, Settings, Users, Bus, BarChart3 } from "lucide-react"
+import { AdminNavbar } from "@/components/admin-navbar"
+import { Settings, Users, Bus, BarChart3 } from "lucide-react"
 import Link from "next/link"
-import { LogoutButton } from "./logout-button"
 
 interface AdminLayoutProps {
   children: ReactNode
@@ -12,25 +10,8 @@ interface AdminLayoutProps {
 
 export function AdminLayout({ children, title = "Admin Dashboard" }: AdminLayoutProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-50">
-      {/* Admin Header */}
-      <header className="bg-red-600 text-white shadow-lg border-b-4 border-red-700">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Shield className="h-8 w-8" />
-              <div>
-                <h1 className="text-2xl font-bold">Admin Panel</h1>
-                <p className="text-red-100 text-sm">Bus Booking System</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-red-100 text-sm">Administrator</span>
-              <LogoutButton />
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background">
+      <AdminNavbar />
 
       <div className="flex">
         {/* Admin Sidebar */}

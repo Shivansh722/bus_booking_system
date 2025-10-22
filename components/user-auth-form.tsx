@@ -253,6 +253,31 @@ export function UserAuthForm({ mode }: { mode: "login" | "signup" }) {
       
       <CardFooter className="text-xs text-gray-600 bg-gray-50 rounded-b-lg">
         <div className="w-full">
+          <div className="text-center mb-3">
+            {mode === "login" ? (
+              <p>
+                Don't have an account?{" "}
+                <Button
+                  variant="link"
+                  className="p-0 h-auto text-green-600 hover:text-green-800"
+                  onClick={() => router.push("/user/signup")}
+                >
+                  Sign Up Here
+                </Button>
+              </p>
+            ) : (
+              <p>
+                Already have an account?{" "}
+                <Button
+                  variant="link"
+                  className="p-0 h-auto text-green-600 hover:text-green-800"
+                  onClick={() => router.push("/user/login")}
+                >
+                  Login Here
+                </Button>
+              </p>
+            )}
+          </div>
           <p className="font-medium mb-1">
             {mode === "login" ? "Login Requirements:" : "Account Requirements:"}
           </p>

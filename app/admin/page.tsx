@@ -4,7 +4,7 @@ import type React from "react"
 
 import useSWR from "swr"
 import { useState } from "react"
-import { Navbar } from "@/components/navbar"
+import { AdminLayout } from "@/components/admin-layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -16,20 +16,40 @@ export default function AdminDashboard() {
   const { data, mutate } = useSWR("/api/buses?admin=1", fetcher)
   const [form, setForm] = useState({
     name: "",
+    busNumber: "",
+    operator: "",
     origin: "",
     destination: "",
     departureTime: "",
+    arrivalTime: "",
+    duration: "",
+    price: "",
+    busType: "AC" as "AC" | "Non-AC" | "Sleeper" | "Semi-Sleeper",
+    amenities: [] as string[],
     totalSeats: 40,
   })
   async function createBus(e: React.FormEvent) {
     e.preventDefault()
-    const res = await fetch("/api/buses", {
+    const res = await fetch("/api/admin/buses", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     })
     if (res.ok) {
-      setForm({ name: "", origin: "", destination: "", departureTime: "", totalSeats: 40 })
+      setForm({ 
+        name: "", 
+        busNumber: "",
+        operator: "",
+        origin: "", 
+        destination: "", 
+        departureTime: "", 
+        arrivalTime: "",
+        duration: "",
+        price: "",
+        busType: "AC",
+        amenities: [],
+        totalSeats: 40 
+      })
       mutate()
     }
   }
@@ -39,9 +59,8 @@ export default function AdminDashboard() {
   }
 
   return (
-    <main>
-      <Navbar />
-      <section className="mx-auto max-w-5xl px-4 py-8 grid gap-8">
+    <AdminLayout title="Admin Dashboard">
+      <section className="grid gap-8">
         <Card>
           <CardHeader>
             <CardTitle className="text-pretty">Create New Bus</CardTitle>
@@ -49,13 +68,46 @@ export default function AdminDashboard() {
           <CardContent>
             <form onSubmit={createBus} className="grid gap-4 md:grid-cols-2">
               <div className="grid gap-2">
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="name">Bus Name</Label>
                 <Input
                   id="name"
                   value={form.name}
                   onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                   required
                 />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="busNumber">Bus Number</Label>
+                <Input
+                  id="busNumber"
+                  value={form.busNumber}
+                  onChange={(e) => setForm((f) => ({ ...f, busNumber: e.target.value }))}
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="operator">Operator</Label>
+                <Input
+                  id="operator"
+                  value={form.operator}
+                  onChange={(e) => setForm((f) => ({ ...f, operator: e.target.value }))}
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="busType">Bus Type</Label>
+                <select
+                  id="busType"
+                  value={form.busType}
+                  onChange={(e) => setForm((f) => ({ ...f, busType: e.target.value as any }))}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  required
+                >
+                  <option value="AC">AC</option>
+                  <option value="Non-AC">Non-AC</option>
+                  <option value="Sleeper">Sleeper</option>
+                  <option value="Semi-Sleeper">Semi-Sleeper</option>
+                </select>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="origin">Origin</Label>
@@ -76,12 +128,44 @@ export default function AdminDashboard() {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="departureTime">Departure (ISO)</Label>
+                <Label htmlFor="departureTime">Departure Time</Label>
                 <Input
                   id="departureTime"
                   type="datetime-local"
                   value={form.departureTime}
                   onChange={(e) => setForm((f) => ({ ...f, departureTime: e.target.value }))}
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="arrivalTime">Arrival Time</Label>
+                <Input
+                  id="arrivalTime"
+                  type="datetime-local"
+                  value={form.arrivalTime}
+                  onChange={(e) => setForm((f) => ({ ...f, arrivalTime: e.target.value }))}
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="duration">Duration</Label>
+                <Input
+                  id="duration"
+                  placeholder="e.g., 5h 30m"
+                  value={form.duration}
+                  onChange={(e) => setForm((f) => ({ ...f, duration: e.target.value }))}
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="price">Price (₹)</Label>
+                <Input
+                  id="price"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={form.price}
+                  onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
                   required
                 />
               </div>
@@ -143,6 +227,6 @@ export default function AdminDashboard() {
           )}
         </div>
       </section>
-    </main>
+    </AdminLayout>
   )
 }

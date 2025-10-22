@@ -1,22 +1,23 @@
 "use client"
 
 import useSWR from "swr"
-import { useState } from "react"
+import { useState, use } from "react"
 import { useRouter } from "next/navigation"
-import { Navbar } from "@/components/navbar"
+import { UserLayout } from "@/components/user-layout"
 import { SeatGrid } from "@/components/seat-grid"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
-export default function BusDetailsPage({ params }: { params: { id: string } }) {
+export default function BusDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
-  const { data, mutate } = useSWR(`/api/buses/${params.id}`, fetcher)
+  const { id } = use(params)
+  const { data, mutate } = useSWR(`/api/buses/${id}`, fetcher)
   const [selected, setSelected] = useState<number | null>(null)
   async function book() {
     if (!selected) return
-    const res = await fetch(`/api/buses/${params.id}/book`, {
+    const res = await fetch(`/api/buses/${id}/book`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ seat: selected }),
@@ -24,14 +25,13 @@ export default function BusDetailsPage({ params }: { params: { id: string } }) {
     if (res.ok) mutate()
   }
   async function cancel() {
-    const res = await fetch(`/api/buses/${params.id}/cancel`, { method: "POST" })
+    const res = await fetch(`/api/buses/${id}/cancel`, { method: "POST" })
     if (res.ok) mutate()
   }
 
   const bus = data
   return (
-    <main>
-      <Navbar />
+    <UserLayout title={bus ? `${bus.name} — ${bus.origin} → ${bus.destination}` : "Bus Details"}>
       <section className="mx-auto max-w-5xl px-4 py-8">
         {!bus ? (
           <p>Loading...</p>
@@ -70,6 +70,6 @@ export default function BusDetailsPage({ params }: { params: { id: string } }) {
           </Card>
         )}
       </section>
-    </main>
+    </UserLayout>
   )
 }
